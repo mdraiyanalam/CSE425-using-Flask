@@ -1,0 +1,22 @@
+<!-- math_challenge.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Challenge</title>
+</head>
+<body>
+    <h1>Math Challenge</h1>
+    <p>{{ challenge }}</p>
+
+    <form method="POST">
+        <label for="answer">Your Answer:</label>
+        <input type="text" name="answer" id="answer" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

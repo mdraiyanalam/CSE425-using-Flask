@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Welcome {{ username }}{% endblock %}
+
+{% block content %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Kid's Calculator</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('game', type='math_puzzle') }}">Math Challenges</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('game', type='periodic_table_explorer') }}">Science Challenges</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('progress') }}">My Progress</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard -->
+    <div class="container dashboard">\
+        <br>
+        <h1 class="text-center">Welcome, {{ username }}</h1>
+        <br>
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Card 1 -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Math Challenges</h5>
+                        <p class="card-text">Challenge your skills with math problems.</p>
+                        <a href="{{ url_for('game', type='math_puzzle') }}" class="btn btn-primary">Start Challenge</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Card 2 -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Science Challenges</h5>
+                        <p class="card-text">Test your knowledge with science questions.</p>
+                        <a href="{{ url_for('game', type='periodic_table_explorer') }}" class="btn btn-primary">Start Challenge</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Card 3 -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Leaderboard</h5>
+                        <p class="card-text">Check out the current leaderboard standings.</p>
+                        <a href="{{ url_for('leaderboard') }}" class="btn btn-primary">View Leaderboard</a>
+                    </div>
+                </div>
+            </div>
+            <!-- <li><a href="{{ url_for('challenge', subject='math') }}">Math Challenges</a></li>
+            <li><a href="{{ url_for('challenge', subject='science') }}">Science Challenges</a></li> -->
+        </div>
+    </div>
+{% endblock %}
