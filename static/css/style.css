@@ -1,0 +1,15 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f9;
+}
+
+h1 {
+    font-size: 2rem;
+    line-height: 1.5; /* Matches the height of the buttons */
+}
+
+.btn {
+    font-size: 1.5rem; /* Matches the text size */
+    height: 100%; /* Stretches to fill the column height */
+}

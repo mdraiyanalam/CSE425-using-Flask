@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Math Puzzle Game{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1>Math Puzzle Game</h1>
+                </div>
+                <div class="card-body">
+                    {% if question %}
+                        <p class="text-center"><strong>{{ question }}</strong></p>
+                        <form method="POST" action="{{ url_for('game', type='math_puzzle') }}">
+                            <div class="mb-3">
+                                <label for="answer" class="form-label">Your Answer:</label>
+                                <input type="text" name="answer" id="answer" class="form-control" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </form>
+                    {% elif message %}
+                        <p class="text-center">{{ message }}</p>
+                        <div class="text-center">
+                            <a href="{{ url_for('game', type='math_puzzle') }}" class="btn btn-primary">Try Another Puzzle</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-link">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

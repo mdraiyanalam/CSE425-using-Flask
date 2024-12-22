@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1>Profile of {{ profile['username'] }}</h1>
+                </div>
+                <div class="card-body">
+                    <!-- Display current profile information -->
+                    <form method="POST" action="{{ url_for('profile') }}">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                id="email" 
+                                class="form-control" 
+                                value="{{ profile['email'] }}" 
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role:</label>
+                            <select name="role" id="role" class="form-select">
+                                <option value="student" {% if profile['role'] == 'student' %}selected{% endif %}>Student</option>
+                                <option value="parent" {% if profile['role'] == 'parent' %}selected{% endif %}>Parent</option>
+                                <option value="teacher" {% if profile['role'] == 'teacher' %}selected{% endif %}>Teacher</option>
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-link">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const successMessage = "{{ success_message | default('', true) }}";
+    if (successMessage) {
+        showFlashMessage(successMessage, "success");
+    }
+</script>
+{% endblock %}
+
