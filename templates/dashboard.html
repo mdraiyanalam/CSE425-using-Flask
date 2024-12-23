@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Welcome {{ username }}{% endblock %}
+
+{% block content %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Kid's Calculator</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('game', type='math_puzzle') }}">Math Challenges</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('game', type='periodic_table_explorer') }}">Science Challenges</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('unit_conversion') }}">Unit Conversion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('memory') }}">Memory</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('progress') }}">My Progress</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('advanced_math') }}">Advanced Math</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard -->
+    <div class="container dashboard">
+        <br>
+        <h1 class="text-center">Welcome, {{ username }}</h1>
+        <br>
+        <div class="row">
+            <!-- Math Challenges Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Math Challenges</h5>
+                        <p class="card-text">Challenge your skills with math problems.</p>
+                        <a href="{{ url_for('game', type='math_puzzle') }}" class="btn btn-primary">Start Challenge</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Science Challenges Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Science Challenges</h5>
+                        <p class="card-text">Test your knowledge with science questions.</p>
+                        <a href="{{ url_for('game', type='periodic_table_explorer') }}" class="btn btn-primary">Start Challenge</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit Conversion Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Unit Conversion</h5>
+                        <p class="card-text">Convert different units easily.</p>
+                        <a href="{{ url_for('unit_conversion') }}" class="btn btn-primary">Start Conversion</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Card -->
+            <!-- <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Leaderboard</h5>
+                        <p class="card-text">Check out the current leaderboard standings.</p>
+                        <a href="{{ url_for('leaderboard') }}" class="btn btn-primary">View Leaderboard</a>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- My Progress Card -->
+            <!-- <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">My Progress</h5>
+                        <p class="card-text">Track your progress and achievements.</p>
+                        <a href="{{ url_for('progress') }}" class="btn btn-primary">View Progress</a>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Profile Card -->
+            <!-- <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Profile</h5>
+                        <p class="card-text">View and edit your profile.</p>
+                        <a href="{{ url_for('profile') }}" class="btn btn-primary">View Profile</a>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Advanced Math Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Advanced Math</h5>
+                        <p class="card-text">Explore advanced math topics.</p>
+                        <a href="{{ url_for('advanced_math') }}" class="btn btn-primary">Start Learning</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Memory Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Memory</h5>
+                        <p class="card-text">Improve your memory with fun games.</p>
+                        <a href="{{ url_for('memory') }}" class="btn btn-primary">Start Game</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logout Card -->
+            <!-- <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Logout</h5>
+                        <p class="card-text">Log out of your account.</p>
+                        <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </div> -->
+
+        </div>
+    </div>
+{% endblock %}

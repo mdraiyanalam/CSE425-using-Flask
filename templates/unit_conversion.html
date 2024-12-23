@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center">
+    <div class="card p-4 shadow-lg" style="width: 400px;">
+        <h4 class="text-center mb-4">Unit Conversion</h4>
+        <form method="POST">
+            <div class="form-group mb-3">
+                <label for="conversion_type">Select Conversion Type</label>
+                <select class="form-control" id="conversion_type" name="conversion_type" required>
+                    <option value="meters_to_kilometers">Meters to Kilometers</option>
+                    <option value="kilometers_to_meters">Kilometers to Meters</option>
+                    <option value="grams_to_kilograms">Grams to Kilograms</option>
+                    <option value="kilograms_to_grams">Kilograms to Grams</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="value">Enter Value</label>
+                <input type="number" step="any" class="form-control" id="value" name="value" placeholder="Enter value" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Convert</button>
+        </form>
+        {% if conversion_result %}
+        <div class="alert alert-info mt-4 text-center">
+            {{ conversion_result }}
+        </div>
+        {% endif %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary w-100 mt-3">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Advanced Math Operations{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center mt-5">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Advanced Math Operations</h2>
+            <form method="POST">
+                <!-- First Number Input -->
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <label for="x" class="col-form-label">Enter First Number (x):</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" step="any" class="form-control" id="x" name="x" required>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <!-- Second Number Input -->
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <label for="y" class="col-form-label">Enter Second Number (y):</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" step="any" class="form-control" id="y" name="y">
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <!-- Operation Selection -->
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <label for="operation" class="col-form-label">Select Operation:</label>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" id="operation" name="operation" required>
+                                <option value="power">Power (x^y)</option>
+                                <option value="square_root">Square Root (sqrt(x))</option>
+                                <option value="modulus">Modulus (x % y)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block w-100">Calculate</button>
+                </div>
+            </form>
+
+            <!-- Result Section -->
+            {% if result is not none %}
+            <div class="mt-4 text-center">
+                <h4>Result: {{ result }}</h4>
+            </div>
+            {% endif %}
+
+            <div class="card-footer text-center">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-link">Back to Dashboard</a>
+            </div>
+
+            <!-- Error Message Section -->
+            {% if error_message %}
+            <div class="alert alert-danger mt-4 text-center" role="alert">
+                {{ error_message }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

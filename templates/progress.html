@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Progress{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>Progress of {{ session['user'] }}</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject, score in progress.items() %}
+                                <tr>
+                                    <td>{{ subject }}</td>
+                                    <td>{{ score }}%</td>
+                                    <td>{{ "2024-12-22" }}</td> <!-- Example static date -->
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No progress data available</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-link">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

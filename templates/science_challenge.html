@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Science Challenge</title>
+</head>
+<body>
+    <h1>Science Challenge</h1>
+    <p>{{ question }}</p>
+    <form method="POST">
+        <input type="text" name="answer" placeholder="Your Answer" required>
+        <button type="submit">Submit</button>
+    </form>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

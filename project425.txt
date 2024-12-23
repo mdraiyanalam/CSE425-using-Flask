@@ -1,0 +1,552 @@
+
+class EducationalLearningShell:
+    def __init__(self):
+   
+        self.db_path = 'Child_learning_shell.db'
+        self.setup_database()
+        self.current_user = None
+        self.student_challenges={   
+        self.learning_paths = {
+            'math': {
+                'levels': {
+                    1: ['basic addition', 'basic subtraction'],
+                    2: ['multiplication', 'division'],
+                    3: ['fractions', 'decimals'],
+                    4: ['algebra basics', 'geometry']
+                },
+                'difficulty_map': {
+                    'easy': range(1, 10),
+                    'medium': range(10, 50),
+                    'hard': range(50, 100)
+                }
+            },
+            'science': {
+                'levels': {
+                    1: ['basic biology', 'simple physics'],
+                    2: ['earth science', 'basic chemistry'],
+                    3: ['advanced biology', 'advanced physics']
+                }
+            }
+        }
+
+
+    def setup_database(self):
+        """Set up the database with all necessary tables."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+
+            # Users Table
+
+
+            # Feedback Table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS feedback (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    student_username TEXT,
+                    reviewer_type TEXT CHECK(reviewer_type IN ('parent', 'teacher')),
+                    reviewer_username TEXT,
+                    subject TEXT,
+                    comments TEXT,
+                    suggested_focus_areas TEXT,
+                    improvement_score REAL,
+                    date DATETIME,
+                    FOREIGN KEY(student_username) REFERENCES users(username)
+                )
+            ''')
+
+            # Interventions Table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS interventions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    student_username TEXT,
+                    subject TEXT,
+                    intervention_type TEXT,
+                    description TEXT,
+                    recommended_by TEXT,
+                    date DATETIME,
+                    status TEXT CHECK(status IN ('pending', 'in_progress', 'completed')),
+                    FOREIGN KEY(student_username) REFERENCES users(username)
+                )
+            ''')
+
+            # Reviewer Accounts Table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS reviewer_accounts (
+                    username TEXT PRIMARY KEY,
+                    password TEXT,
+                    account_type TEXT CHECK(account_type IN ('parent', 'teacher')),
+                    associated_students TEXT,
+                    email TEXT
+                )
+            ''')
+
+            conn.commit()
+    def generate_challenge(self, subject, difficulty):
+        """Generate a dynamic challenge based on subject and difficulty"""
+        if subject == 'math':
+            num_range = self.learning_paths['math']['difficulty_map'][difficulty]
+            a, b = random.choice(list(num_range)), random.choice(list(num_range))
+            operations = ['+', '-', '*', '/']
+            operation = random.choice(operations)
+
+            challenge = f"What is {a} {operation} {b}?"
+
+            if operation == '+':
+                answer = a + b
+            elif operation == '-':
+                answer = a - b
+            elif operation == '*':
+                answer = a * b
+            else:
+                answer = round(a / b, 2)
+
+            return challenge, answer
+
+        elif subject == 'science':
+        # Sample science questions
+         science_questions = [
+            ("What planet is known as the Red Planet?", "Mars"),
+            ("What is the chemical symbol for water?", "H2O"),
+            ("What gas do plants absorb from the atmosphere?", "Carbon dioxide"),
+            ("What is the process by which plants make food using sunlight?", "Photosynthesis")
+        ]
+        challenge, answer = random.choice(science_questions)
+        return challenge, answer
+
+
+
+        return None, None
+
+    def user_dashboard(self,user):
+        """User's main dashboard after login"""
+        while True:
+            print(f"\nWelcome, {user['username']}!")
+            print("1. Take Math Challenge")
+            print("2. Take Science Challenge")
+            print("3. View Progress Report")
+            print("4. View Tasks")
+            print("5. Logout")
+
+
+
+            choice = input("Enter your choice: ")
+
+            if choice == '1':
+                self.start_challenge('math')
+            elif choice == '2':
+                self.start_challenge('science')
+            elif choice == '3':
+                report = self.generate_report()
+                self.display_report(report)
+            elif choice == '4':
+                self.view_student_challenges(self.current_user)
+
+            elif choice == '5':
+                break
+
+    def generate_report(self):
+        """Generate a comprehensive learning report """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+
+            # Fetch progress for all subjects
+            cursor.execute('''
+                SELECT subject, level, challenges_completed, last_activity
+                FROM progress
+                WHERE username = ?
+            ''', (self.current_user,))
+            progress = cursor.fetchall()
+
+            # Fetch recent challenges
+            cursor.execute('''
+                SELECT subject, challenge_type, difficulty, score
+                FROM challenges
+                WHERE username = ?
+                ORDER BY date DESC
+                LIMIT 10
+            ''', (self.current_user,))
+            challenges = cursor.fetchall()
+
+            return {
+                'progress': progress,
+                'recent_challenges': challenges
+            }
+
+    def display_report(self, report):
+        """Display learning progress report"""
+        print("\n--- Learning Progress Report ---")
+        for subject, level, completed, last_activity in report['progress']:
+            print(f"{subject.capitalize()} Level: {level}")
+            print(f"Challenges Completed: {completed}")
+            print(f"Last Activity: {last_activity}\n")
+
+        print("Recent Challenges:")
+        for subject, challenge_type, difficulty, score in report['recent_challenges']:
+            print(f"{subject.capitalize()} - {challenge_type} ({difficulty}): Score {score}")
+
+    def start_challenge(self, subject):
+        """Start a challenge for a specific subject/replce with your code"""
+        challenge, answer = self.generate_challenge(subject, 'medium')
+
+        if not challenge:
+          print(f"No challenges available for {subject} right now.")
+          return
+
+        print(f"\n{challenge}")
+
+        user_answer = input("Your answer: ").strip()
+
+        if isinstance(answer, (int, float)):
+            try:
+                  user_answer = float(user_answer)
+            except ValueError:
+                   print("Invalid input. Please enter a number.")
+                   return
+
+        if isinstance(answer, str):
+            is_correct = user_answer.lower() == answer.lower()
+        else:
+             is_correct = user_answer == answer
+
+
+
+
+        if user_answer == answer:
+            print("Correct! Great job!")
+            score = 1.0
+        else:
+            print(f"Incorrect. The correct answer is {answer}")
+            score = 0.0
+
+        self.track_progress(subject, 'challenge', score)
+
+    def track_progress(self, subject, challenge_type, score):
+        """Update user's progress after completing a challenge"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+
+            # Record challenge
+            cursor.execute('''
+                INSERT INTO challenges (username, subject, challenge_type, difficulty, score, date)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (self.current_user, subject, challenge_type, 'medium', score, datetime.datetime.now()))
+
+            # Update progress
+            cursor.execute('''
+                UPDATE progress
+                SET challenges_completed = challenges_completed + 1,
+                    last_activity = ?
+                WHERE username = ? AND subject = ?
+            ''', (datetime.datetime.now(), self.current_user, subject))
+
+            conn.commit()
+
+
+
+
+    def view_student_reports(self, account_info):
+        """View reports for associated students"""
+        print("\nYour Associated Students:")
+        for i, student in enumerate(account_info['associated_students'], 1):
+            print(f"{i}. {student}")
+
+        student_choice = int(input("Select a student to view report: ")) - 1
+        student_username = account_info['associated_students'][student_choice]
+
+        report = self.get_student_comprehensive_report(student_username)
+
+        print(f"\n--- Comprehensive Report for {student_username} ---")
+
+        # Display Progress
+        print("\nProgress:")
+        for subject, level, completed, last_activity in report['progress']:
+            print(f"{subject.capitalize()} - Level: {level}, Challenges: {completed}, Last Active: {last_activity}")
+
+        # Display Recent Challenges
+        print("\nRecent Challenges:")
+        for subject, challenge_type, difficulty, score in report['recent_challenges']:
+            print(f"{subject.capitalize()} - {challenge_type} ({difficulty}): Score {score}")
+
+        # Display Feedback History
+        print("\nFeedback History:")
+        for rev_type, rev_username, subject, comments, focus_areas, score, date in report['feedback_history']:
+            print(f"{date}: {rev_type.capitalize()} ({rev_username}) - {subject}")
+            print(f"Comments: {comments}")
+            print(f"Focus Areas: {focus_areas}")
+            print(f"Improvement Score: {score}\n")
+
+
+    def submit_student_feedback(self, account_info):
+        """Submit feedback for a student"""
+        print("\nYour Associated Students:")
+        for i, student in enumerate(account_info['associated_students'], 1):
+            print(f"{i}. {student}")
+
+        student_choice = int(input("Select a student to provide feedback: ")) - 1
+        student_username = account_info['associated_students'][student_choice]
+
+        subject = input("Enter subject (math/science): ")
+        comments = input("Enter your comments: ")
+        focus_areas = input("Suggested focus areas: ")
+        improvement_score = float(input("Improvement score (0-1): "))
+
+        self.submit_feedback(
+            student_username,
+            account_info['username'],
+            account_info['account_type'],
+            subject,
+            comments,
+            focus_areas,
+            improvement_score
+        )
+        print("Feedback submitted successfully!")
+
+    def submit_feedback(self, student_username, reviewer_username, reviewer_type, subject, comments, suggested_focus_areas, improvement_score):
+        """Submit feedback for a student"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO feedback
+                (student_username, reviewer_type, reviewer_username,
+                subject, comments, suggested_focus_areas,
+                improvement_score, date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (student_username, reviewer_type, reviewer_username,
+                  subject, comments, suggested_focus_areas,
+                  improvement_score, datetime.datetime.now()))
+            conn.commit()
+
+    def get_student_comprehensive_report(self, student_username):
+        """Generate a comprehensive student report for parents and teachers"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+
+            # Overall Progress
+            cursor.execute('''
+                SELECT subject, level, challenges_completed, last_activity
+                FROM progress
+                WHERE username = ?
+            ''', (student_username,))
+            progress = cursor.fetchall()
+
+            # Recent Challenges
+            cursor.execute('''
+                SELECT subject, challenge_type, difficulty, score
+                FROM challenges
+                WHERE username = ?
+                ORDER BY date DESC
+                LIMIT 20
+            ''', (student_username,))
+            challenges = cursor.fetchall()
+
+            # Feedback History
+            cursor.execute('''
+                SELECT reviewer_type, reviewer_username, subject,
+                       comments, suggested_focus_areas, improvement_score, date
+                FROM feedback
+                WHERE student_username = ?
+                ORDER BY date DESC
+            ''', (student_username,))
+            feedback_history = cursor.fetchall()
+
+            # Active Interventions
+            cursor.execute('''
+                SELECT subject, intervention_type, description,
+                       recommended_by, status, date
+                FROM interventions
+                WHERE student_username = ? AND status != 'completed'
+            ''', (student_username,))
+            active_interventions = cursor.fetchall()
+
+            return {
+                'progress': progress,
+                'recent_challenges': challenges,
+                'feedback_history': feedback_history,
+                'active_interventions': active_interventions
+            }
+
+    def create_student_intervention(self, account_info):
+        """Create a learning intervention for a student"""
+        print("\nYour Associated Students:")
+        for i, student in enumerate(account_info['associated_students'], 1):
+            print(f"{i}. {student}")
+
+        student_choice = int(input("Select a student for intervention: ")) - 1
+        student_username = account_info['associated_students'][student_choice]
+
+        subject = input("Enter subject (math/science): ")
+        intervention_type = input("Intervention type (tutoring/extra practice/specialized material): ")
+        description = input("Describe the intervention: ")
+
+        self.create_learning_intervention(
+            student_username,
+            subject,
+            intervention_type,
+            description,
+            account_info['username']
+        )
+        print("Intervention recommendation created successfully!")
+
+    def create_student_challenge(self, account_info):
+
+      print("\nYour Associated Students:")
+      for i, student in enumerate(account_info['associated_students'], 1):
+            print(f"{i}. {student}")
+
+    # Select a student
+      try:
+          student_choice = int(input("Select a student to assign a challenge: ")) - 1
+          student_username = account_info['associated_students'][student_choice]
+      except (IndexError, ValueError):
+               print("Invalid choice. Please try again.")
+               return
+
+    # Collect challenge details
+      title = input("Enter the title of the challenge: ")
+      subject = input("Enter the subject (e.g., Math, Science, English): ")
+      description = input("Enter a detailed description of the challenge: ")
+      difficulty = input("Enter difficulty level (Easy, Medium, Hard): ")
+      deadline = input("Enter a deadline (YYYY-MM-DD): ")
+      reward = input("Enter a reward for completing the challenge: ")
+
+    # Worksheet submission option
+      print("\nHow would you like to attach a worksheet?")
+      print("1. Upload a file")
+      print("2. Provide a link")
+      print("3. Manually write the challenge content")
+      worksheet_type = input("Enter your choice (1, 2, or 3): ")
+
+      worksheet_file_path = None
+      worksheet_link = None
+      manual_content = None
+
+      if worksheet_type == "1":
+        worksheet_file_path = input("Enter the file path of the worksheet to upload: ") #can update the code for file upload dialog open kinda thing 
+        print("Worksheet file uploaded successfully!")
+      elif worksheet_type == "2":
+        worksheet_link = input("Enter the link to the worksheet: ")
+        print("Worksheet link saved successfully!")
+      elif worksheet_type == "3":
+        manual_content = input("Write the content of the challenge directly here:\n")
+        print("Manual challenge content saved successfully!")
+      else:
+        print("Invalid choice. No worksheet attached.")
+
+    # Store the challenge in the system
+      if student_username not in self.student_challenges:
+        self.student_challenges[student_username] = []
+
+      self.student_challenges[student_username].append({
+        "title": title,
+        "subject": subject,
+        "description": description,
+        "difficulty": difficulty,
+        "deadline": deadline,
+        "reward": reward,
+        "created_by": account_info['username'],
+        "worksheet_file_path": worksheet_file_path,
+        "worksheet_link": worksheet_link,
+        "manual_content": manual_content,
+    })
+
+      print(f"\nChallenge '{title}' has been successfully assigned to {student_username}!\n")
+
+    def student_challenges(self, account_info):
+
+
+      username=account_info['username']
+
+      if username not in self.student_challenges or not self.student_challenges[username]:
+        print("You currently have no assigned challenges.")
+        return
+
+      print("\n-- Your Assigned Challenges----")
+
+      for i,challenge in enumerate(self.student_challenges[username],1):
+          print(f"\nChallenge {i}:{challenge['title']}")
+          print(f"Subject: {challenge['subject']}")
+          print(f"Description: {challenge['description']}")
+          print(f"Difficulty: {challenge['difficulty']}")
+          print(f"Deadline: {challenge['deadline']}")
+          print(f"Reward: {challenge['reward']}")
+          print(f"Created By: {challenge['created_by']}")
+
+
+          if challenge["worksheet_file_path"]:
+            print(f"Worksheet File Path: {challenge['worksheet_file_path']} (Ask your teacher/parent to share this file.)")
+          elif challenge["worksheet_link"]:
+            print(f"Worksheet Link: {challenge['worksheet_link']} (You can open this link in a browser.)")
+          elif challenge["manual_content"]:
+            print(f"Manual Challenge Content:\n{challenge['manual_content']}")
+          else:
+            print("No worksheet attached.")
+
+
+
+    def view_student_challenges(self, current_user):
+
+     if current_user not in self.student_challenges or not self.student_challenges[current_user]:
+        print("\nYou currently have no assigned challenges.")
+        return
+
+
+
+        print("\n--- Your Assigned Challenges ---")
+        for i, challenge in enumerate(student_challenges['current_user'], 1):
+          print(f"\nChallenge {i}: {challenge['title']}")
+          print(f"Subject: {challenge['subject']}")
+          print(f"Description: {challenge['description']}")
+          print(f"Difficulty: {challenge['difficulty']}")
+          print(f"Deadline: {challenge['deadline']}")
+          print(f"Reward: {challenge['reward']}")
+          print(f"Created By: {challenge['created_by']}")
+
+        # Display worksheet information
+        if challenge["worksheet_file_path"]:
+            print(f"Worksheet File Path: {challenge['worksheet_file_path']}")
+        elif challenge["worksheet_link"]:
+            print(f"Worksheet Link: {challenge['worksheet_link']}")
+        elif challenge["manual_content"]:
+            print(f"Manual Challenge Content:\n{challenge['manual_content']}")
+        else:
+            print("No worksheet attached.")
+    print("\n------------------------------")
+    def create_learning_intervention(self, student_username, subject, intervention_type, description, recommended_by):
+        """Create a learning intervention recommendation"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO interventions
+                (student_username, subject, intervention_type,
+                description, recommended_by, date, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (student_username, subject, intervention_type,
+                   description, recommended_by, datetime.datetime.now(), 'pending'))
+            conn.commit()
+
+
+
+    def run_interactive_cli(self):
+        """Main interactive CLI."""
+        while True:
+            print("\n--- Kid's Learning Shell ---")
+            print("1. Student Register/Login")
+            print("2. Parent/Teacher Register/Login")
+            print("3. Exit")
+
+            choice = input("Enter your choice: ")
+
+            if choice == '1':
+                self.student_login_flow()
+                # self.user_dashboard()
+            elif choice == '2':
+                self.parent_teacher_login_flow()
+            elif choice == '3':
+                break
+
+def main():
+    learning_shell = EducationalLearningShell()
+    learning_shell.run_interactive_cli()
+
+if __name__ == "__main__":
+    main()
